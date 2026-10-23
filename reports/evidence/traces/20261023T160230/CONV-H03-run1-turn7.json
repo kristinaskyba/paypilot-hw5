@@ -1,0 +1,47 @@
+{
+  "case": "CONV-H03",
+  "run": 1,
+  "turn": 7,
+  "user": "And how much of my monthly limit is left?",
+  "answer": "You have **EUR 49,964.50** left of your EUR 50,000 monthly transfer limit. You have used EUR 35.50 so far this month. These figures are as of 2026-09-15.",
+  "trace": {
+    "request_id": "cc9cbf3959054214",
+    "name": "agent.request",
+    "span_id": "1982939611f741c3",
+    "started_at": 1792771376.616786,
+    "ended_at": 1792771378.1859262,
+    "duration_ms": 1569.1,
+    "attributes": {
+      "session.id": "80810446acce",
+      "dialog.step_number": 7,
+      "run.profile": "lesson-05",
+      "run.active_defects": [
+        "D06",
+        "D07"
+      ],
+      "prompt.version": "base.v1+D07",
+      "reply.language_detected": "",
+      "llm.provider": "anthropic",
+      "session.customer_id": "CUS-0004",
+      "context.replay_active": false,
+      "gen_ai.usage.total_input_tokens": 4913,
+      "gen_ai.usage.total_output_tokens": 185
+    },
+    "children": [
+      {
+        "name": "llm.call",
+        "span_id": "885839833cde4a5c",
+        "started_at": 1792771376.617041,
+        "ended_at": 1792771378.1858964,
+        "duration_ms": 1568.9,
+        "attributes": {
+          "agent.loop_step": 0,
+          "gen_ai.request.model": "claude-haiku-5-5",
+          "gen_ai.usage.input_tokens": 4913,
+          "gen_ai.usage.output_tokens": 185
+        },
+        "children": []
+      }
+    ]
+  }
+}

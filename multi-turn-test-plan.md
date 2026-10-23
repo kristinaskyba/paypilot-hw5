@@ -203,8 +203,23 @@ based on                               the contradiction appears only after the 
 
 | Scenario | Failure (symptom) | Mechanism | Loss step | Manifestation step | Evidence: history · retrieval context |
 | --- | --- | --- | --- | --- | --- |
-| CONV-… |  |  |  |  |  |
-| CONV-… |  |  |  |  |  |
+| CONV-H01 | same dialogue as C-07; see 3.1 and 3.2 | D06 (+ D07 in 2.3 run 4) | 3 | 5 | see 3.1 (lab traces `20261019T101322`) |
+| CONV-H02 | none — expected for the control | — | — | — | history: full messages, **no `agent.summarize` span** (5/5 runs, precondition "did NOT run" passed) |
+| CONV-H03 | step 8: "I can't tell from here which of these" — offers TX-0402 and TX-0401 as equals; step 9 checks both | **forgot (D06)** | 3 | 8 | history at step 3: summary (6 messages replaced) *"wants to dispute a card transaction … identified the appropriate reason category … eligible"* — no TX-0401, no 240.00, no code name, no date or deadline. Step 8: that summary + steps 3–7 + `get_transactions` → two 240 € TechMart charges. Retrieval: no `search_knowledge_base` at step 8, so not a search failure · traces `42cec44d`, `34c2703a` |
+| CONV-H04 | step 6: "Which one is the payment … TX-0402 or TX-0401?"; step 7 gives both deadlines | **forgot (D06)** | 3 | 6 (5 in 4/5 v2 runs) | history at step 3: summary (8 messages replaced) *"reported a payment for goods that never arrived … identified the matching reason code … eligible"* — no TX, amount, date or deadline. Retrieval at step 3: `disputes-process.md#s1/#s3/#s6`, `glossary.md#s7` (process only, no case facts) · traces `48f3bd71`, `b28a6828` |
+| CONV-H04 | step 4: "I couldn't find a timeframe" (the `clean` run answered "10 business days for card reason codes") | **not found on this step** (retrieval) | 4 | 4 | retrieval at step 4, query *"dispute investigation duration timeline resolution time"*: `disputes-process.md#s6` (0.88), `glossary.md#s7`, `disputes-process.md#s1`, `notifications.md#s2` — the section with review targets is not in the top 4. Not caught by any invariant · trace `3bfd7fa7` |
+| CONV-H05 | step 6: checks eligibility under **service_not_rendered**, which the customer never said; step 7: "the two together come to **EUR 480.00**" | **forgot (D06)** — substitution | 3 | 6 | history at step 3: summary (8 messages replaced) *"two identical payments … so a possible service_not_rendered is in question"* — the summary invented a reason and kept no amount. Step 6: `check_dispute_eligibility(…, service_not_rendered)` → eligible, the tool accepts it · traces `d016c194`, `65753b4d` |
+| CONV-H01, H03, H04 on `clean` | the agent **opened the dispute** (`create_dispute`) after "240 euro, as I said at the start" — no explicit "yes": 8 of 30 `clean` runs (v1 + v2) | **outside the three mechanisms** — action layer, not memory (happens on `clean`, no D06) | — | 6 (H03: 9) | tool call at that step: `create_dispute(TX-0401, goods_not_received, 240.00 EUR)`; history full and correct, the agent had asked for "yes" one step earlier · reports `v1/l05_dialogs-clean-20261023T142707.json`, `l05_dialogs-clean-20261023T151519.json` |
+
+> **Note for the mentor — extra finding outside the memory layer (critical).**
+> While running the plan I noticed that on the healthy `clean` profile the agent sometimes **opens the dispute without an explicit "yes"** (8 of 30 runs of H01/H03/H04, always right after the customer only repeats the amount: "240 euro, as I said at the start").
+> I isolated it in a separate 3-step case, **CONV-A01** (`l05_action.jsonl`, layer `action`, severity `critical`, `set_hash d4cdabe4de2b`): step 1 reason code, step 2 eligibility + the agent asks for "yes", step 3 "240 euro, as I said at the start." Check: no `tool.create_dispute` span at step 3 (level 4, reads the trace); precondition: no `agent.summarize` in the dialog.
+> **Result: 5/5 runs failed on `clean`** — in every run step 3 calls `create_dispute(TX-0401, goods_not_received, 240.00 EUR)` → `{"dispute_id": 1, "status": "open"}`, e.g. trace `55644971` (run 1). History was full and correct, so this is not D06/D07: the agent treats repeating the case details as consent for an irreversible action.
+> Report `reports/action/l05_action-clean-20261023T161432.json`, traces `reports/action/traces/20261023T161432/`. Command: `docker compose run --rm eval --set l05_action --profile clean --traces`.
+> It is kept out of `l05_dialogs.jsonl` on purpose (that set is the memory gate); it is listed as residual risk in section 6.
+
+Traces H03–H05: evidence run `reports/evidence/` (`--only CONV-H03,CONV-H04,CONV-H05 --repeat 1 --traces`, 2026-10-23, 0/3 passed), folder `reports/evidence/traces/20261023T160230/`.
+Note: in H03 the agent named the right code at step 5 although the summary had lost it — it re-derived it from "goods never arrived". A correct answer after the summary does not prove the memory held.
 
 *If a scenario has no failure, write "none" and whether that was expected (for example, for the control scenario).*
 

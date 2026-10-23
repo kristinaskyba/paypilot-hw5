@@ -1,0 +1,47 @@
+{
+  "case": "CONV-H03",
+  "run": 1,
+  "turn": 10,
+  "user": "And I still have time to file, right?",
+  "answer": "Yes. Based on the eligibility checks as of 2026-09-15:\n\n- **TX-0402** (TechMart Online, EUR 240.00, 2026-07-14): deadline **2026-10-12**\n- **TX-0401** (TechMart Online, EUR 240.00, 2026-07-20): deadline **2026-10-18**\n\nNothing has been filed yet. Which charge is for the goods that didn't arrive? Once you tell me, I'll summarise the dispute for your confirmation before filing.",
+  "trace": {
+    "request_id": "b877d79b67db4c4b",
+    "name": "agent.request",
+    "span_id": "0b417e6a0ec44dc1",
+    "started_at": 1792771390.6906407,
+    "ended_at": 1792771393.1268938,
+    "duration_ms": 2436.3,
+    "attributes": {
+      "session.id": "80810446acce",
+      "dialog.step_number": 10,
+      "run.profile": "lesson-05",
+      "run.active_defects": [
+        "D06",
+        "D07"
+      ],
+      "prompt.version": "base.v1+D07",
+      "reply.language_detected": "",
+      "llm.provider": "anthropic",
+      "session.customer_id": "CUS-0004",
+      "context.replay_active": false,
+      "gen_ai.usage.total_input_tokens": 6528,
+      "gen_ai.usage.total_output_tokens": 370
+    },
+    "children": [
+      {
+        "name": "llm.call",
+        "span_id": "2433b3e677ef416c",
+        "started_at": 1792771390.6910386,
+        "ended_at": 1792771393.1268468,
+        "duration_ms": 2435.8,
+        "attributes": {
+          "agent.loop_step": 0,
+          "gen_ai.request.model": "claude-haiku-5-5",
+          "gen_ai.usage.input_tokens": 6528,
+          "gen_ai.usage.output_tokens": 370
+        },
+        "children": []
+      }
+    ]
+  }
+}

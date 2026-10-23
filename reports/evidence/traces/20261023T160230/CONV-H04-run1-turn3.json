@@ -1,0 +1,143 @@
+{
+  "case": "CONV-H04",
+  "run": 1,
+  "turn": 3,
+  "user": "What happens after I file it?",
+  "answer": "Here is what the knowledge base says about filing, and what it doesn't cover.\n\n**What the documentation confirms:**\n- **Filing is final for that reason code.** Once filed, the dispute is under review. You can withdraw it at any time before it is resolved, but a withdrawal is final: the same transaction cannot be disputed again under the same reason code.\n- **Provisional credit does not apply here.** Provisional credit (a temporary refund while the dispute is reviewed) applies only to fraud reason codes above EUR 50. Since this is a goods-not-received dispute, you should not expect a temporary refund while it is reviewed.\n\n**What the documentation does not cover:**\n- How long the review takes, and what the timeline is for a goods-not-received case.\n- What evidence, if any, the review will ask you for, and how you would be contacted.\n- What the outcome options are beyond the refund-or-decline result implied above.\n\nI don't want to guess at those details. If you want, I can:\n1. Escalate to a human agent, who can confirm the review timeline and any evidence requirements before you file.\n2. Go ahead and file the dispute now, using the reason code and transaction we already confirmed as eligible.\n\nPlease tell me whether you want me to file it. Filing is irreversible under the withdrawal rule above, so I'll wait for your explicit go-ahead.",
+  "trace": {
+    "request_id": "48f3bd71049c4496",
+    "name": "agent.request",
+    "span_id": "dc42a65b1be5448e",
+    "started_at": 1792771401.442042,
+    "ended_at": 1792771409.854532,
+    "duration_ms": 8412.5,
+    "attributes": {
+      "session.id": "d8b77231e2be",
+      "dialog.step_number": 3,
+      "run.profile": "lesson-05",
+      "run.active_defects": [
+        "D06",
+        "D07"
+      ],
+      "prompt.version": "base.v1+D07",
+      "reply.language_detected": "",
+      "llm.provider": "anthropic",
+      "session.customer_id": "CUS-0004",
+      "context.replay_active": false,
+      "gen_ai.usage.total_input_tokens": 6453,
+      "gen_ai.usage.total_output_tokens": 830
+    },
+    "children": [
+      {
+        "name": "agent.summarize",
+        "span_id": "36223fdabaac48c4",
+        "started_at": 1792771401.4423814,
+        "ended_at": 1792771404.1968188,
+        "duration_ms": 2754.4,
+        "attributes": {
+          "summary.text": "The customer reported a payment for goods that never arrived and asked which dispute reason applies and whether they can file. The assistant identified the matching reason code, confirmed the transaction is eligible within its window, and asked for explicit confirmation before filing, since filing is irreversible. The dispute has not been filed yet and is awaiting the customer's go-ahead.",
+          "summary.replaced_messages": 8
+        },
+        "children": []
+      },
+      {
+        "name": "llm.call",
+        "span_id": "6f078752c12748be",
+        "started_at": 1792771404.196892,
+        "ended_at": 1792771406.1433737,
+        "duration_ms": 1946.5,
+        "attributes": {
+          "agent.loop_step": 0,
+          "gen_ai.request.model": "claude-haiku-5-5",
+          "gen_ai.usage.input_tokens": 2918,
+          "gen_ai.usage.output_tokens": 267
+        },
+        "children": []
+      },
+      {
+        "name": "tool.search_knowledge_base",
+        "span_id": "03cfd47cedbb4b03",
+        "started_at": 1792771406.1434288,
+        "ended_at": 1792771406.1446147,
+        "duration_ms": 1.2,
+        "attributes": {
+          "tool.name": "search_knowledge_base",
+          "tool.arguments": {
+            "query": "what happens after a dispute is filed goods not received process timeline"
+          },
+          "tool.result": {
+            "index": "kb_clean",
+            "top_k": 4,
+            "query": "what happens after a dispute is filed goods not received process timeline",
+            "fragments": [
+              {
+                "id": "disputes-process.md#s1",
+                "doc": "disputes-process.md",
+                "score": 1.5714,
+                "text": "Dispute handling process\n## Raising a dispute\nA dispute is raised against a single settled transaction. The customer supplies\nthe transaction reference and a reason code. The agent verifies eligibility\nbefore the case is opened; an ineligible request is refused with the failing\ncondition named, except where confidentiality rules apply."
+              },
+              {
+                "id": "disputes-process.md#s3",
+                "doc": "disputes-process.md",
+                "score": 1.4412,
+                "text": "Dispute handling process\n## Provisional credit\nWhere the disputed amount exceeds EUR 50 and the reason code is a fraud code, a\nprovisional credit is applied within two business days. Provisional credit is\nreversed if the dispute is later declined."
+              },
+              {
+                "id": "glossary.md#s7",
+                "doc": "glossary.md",
+                "score": 1.4142,
+                "text": "Glossary\n## Provisional credit\nA temporary refund applied while a dispute is reviewed; reversed if the dispute\nis declined."
+              },
+              {
+                "id": "disputes-process.md#s6",
+                "doc": "disputes-process.md",
+                "score": 1.4142,
+                "text": "Dispute handling process\n## Withdrawing a dispute\nA customer may withdraw a dispute at any time before resolution. Withdrawal is\nfinal; the same transaction cannot be disputed again under the same reason code."
+              }
+            ]
+          },
+          "retrieval.query": "what happens after a dispute is filed goods not received process timeline",
+          "retrieval.index": "kb_clean",
+          "retrieval.top_k": 4,
+          "retrieval.fragments": [
+            {
+              "id": "disputes-process.md#s1",
+              "score": 1.5714,
+              "text": "Dispute handling process\n## Raising a dispute\nA dispute is raised against a single settled transaction. The customer supplies\nthe transaction reference and a re"
+            },
+            {
+              "id": "disputes-process.md#s3",
+              "score": 1.4412,
+              "text": "Dispute handling process\n## Provisional credit\nWhere the disputed amount exceeds EUR 50 and the reason code is a fraud code, a\nprovisional credit is applied wit"
+            },
+            {
+              "id": "glossary.md#s7",
+              "score": 1.4142,
+              "text": "Glossary\n## Provisional credit\nA temporary refund applied while a dispute is reviewed; reversed if the dispute\nis declined."
+            },
+            {
+              "id": "disputes-process.md#s6",
+              "score": 1.4142,
+              "text": "Dispute handling process\n## Withdrawing a dispute\nA customer may withdraw a dispute at any time before resolution. Withdrawal is\nfinal; the same transaction can"
+            }
+          ]
+        },
+        "children": []
+      },
+      {
+        "name": "llm.call",
+        "span_id": "f2507d8998b64410",
+        "started_at": 1792771406.1446915,
+        "ended_at": 1792771409.8545194,
+        "duration_ms": 3709.8,
+        "attributes": {
+          "agent.loop_step": 1,
+          "gen_ai.request.model": "claude-haiku-5-5",
+          "gen_ai.usage.input_tokens": 3535,
+          "gen_ai.usage.output_tokens": 563
+        },
+        "children": []
+      }
+    ]
+  }
+}

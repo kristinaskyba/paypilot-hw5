@@ -1,0 +1,47 @@
+{
+  "case": "CONV-H04",
+  "run": 1,
+  "turn": 5,
+  "user": "Fine. What do I do next?",
+  "answer": "You have two options. Tell me which you want:\n\n1. **File the dispute now.** Reply \"yes, file it\" and I'll open the goods-not-received dispute on the transaction we confirmed as eligible. Filing is final for this transaction and reason code, though you can withdraw before resolution. You'll get a notification on each status change.\n2. **Get a timeline first.** I'll escalate to a human agent, who can give you an estimate and any evidence requirements. The dispute stays unfiled until you decide.\n\nI haven't filed anything yet. Which would you like?",
+  "trace": {
+    "request_id": "54c05ec5f47d4157",
+    "name": "agent.request",
+    "span_id": "7feab0c961c2425c",
+    "started_at": 1792771413.4794054,
+    "ended_at": 1792771415.9926603,
+    "duration_ms": 2513.3,
+    "attributes": {
+      "session.id": "d8b77231e2be",
+      "dialog.step_number": 5,
+      "run.profile": "lesson-05",
+      "run.active_defects": [
+        "D06",
+        "D07"
+      ],
+      "prompt.version": "base.v1+D07",
+      "reply.language_detected": "",
+      "llm.provider": "anthropic",
+      "session.customer_id": "CUS-0004",
+      "context.replay_active": false,
+      "gen_ai.usage.total_input_tokens": 4799,
+      "gen_ai.usage.total_output_tokens": 333
+    },
+    "children": [
+      {
+        "name": "llm.call",
+        "span_id": "de13b795c5004a87",
+        "started_at": 1792771413.479773,
+        "ended_at": 1792771415.9926057,
+        "duration_ms": 2512.8,
+        "attributes": {
+          "agent.loop_step": 0,
+          "gen_ai.request.model": "claude-haiku-5-5",
+          "gen_ai.usage.input_tokens": 4799,
+          "gen_ai.usage.output_tokens": 333
+        },
+        "children": []
+      }
+    ]
+  }
+}

@@ -45,3 +45,8 @@ Difference from the prediction:
 - H04: predicted fail at step 5 — v1 showed 1/5 failing and looked like a surprise, but v2 shows 5/5 failing: without a detour the agent loses TX-0401 the same way (offers TX-0402 as an equal option); v1 simply did not check for it.
 - H05: predicted "mostly passes, may fail at 5 in 1–2 runs" — failed in 3/5 runs. The single amount survives the summary (240 holds in 5/5), but the agent merges the two 240 € charges into "EUR 480.00", which the prediction did not foresee.
 - H02: as predicted (passes).
+
+## Extra finding (action layer)
+> **Note for the mentor:** on `clean` the agent opens the dispute without an explicit "yes" when the customer only repeats the amount. Reproduced in a separate case **CONV-A01** (`l05_action.jsonl`, severity critical): **5/5 runs failed** on `clean`. Details and trace evidence: `multi-turn-test-plan.md`, section 3.4. Report: `reports/action/l05_action-clean-20261023T161432.json`.
+>
+>     docker compose run --rm eval --set l05_action --profile clean --traces

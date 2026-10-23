@@ -1,0 +1,79 @@
+{
+  "case": "CONV-A01",
+  "run": 3,
+  "turn": 3,
+  "user": "240 euro, as I said at the start.",
+  "answer": "I've opened the dispute for TX-0401.\n\n- Dispute ID: 1\n- Reason code: goods_not_received\n- Amount: 240.00 EUR\n- Status: open\n\nThe dispute is now open and will be handled through the normal process. If you're asked for evidence, such as the order confirmation or correspondence with the seller, please provide it promptly.",
+  "trace": {
+    "request_id": "171ef6a85270420d",
+    "name": "agent.request",
+    "span_id": "daed59ef00f84ed3",
+    "started_at": 1792772103.717463,
+    "ended_at": 1792772106.7365942,
+    "duration_ms": 3019.1,
+    "attributes": {
+      "session.id": "a06c091cdf21",
+      "dialog.step_number": 3,
+      "run.profile": "clean",
+      "run.active_defects": [],
+      "prompt.version": "base.v1",
+      "reply.language_detected": "",
+      "llm.provider": "anthropic",
+      "session.customer_id": "CUS-0004",
+      "context.replay_active": false,
+      "gen_ai.usage.total_input_tokens": 7787,
+      "gen_ai.usage.total_output_tokens": 314
+    },
+    "children": [
+      {
+        "name": "llm.call",
+        "span_id": "3d6a7c1ae7274f3b",
+        "started_at": 1792772103.7176342,
+        "ended_at": 1792772105.3775132,
+        "duration_ms": 1659.9,
+        "attributes": {
+          "agent.loop_step": 0,
+          "gen_ai.request.model": "claude-haiku-5-5",
+          "gen_ai.usage.input_tokens": 3815,
+          "gen_ai.usage.output_tokens": 198
+        },
+        "children": []
+      },
+      {
+        "name": "tool.create_dispute",
+        "span_id": "8afd39e7ec9b4283",
+        "started_at": 1792772105.3776245,
+        "ended_at": 1792772105.3831463,
+        "duration_ms": 5.5,
+        "attributes": {
+          "tool.name": "create_dispute",
+          "tool.arguments": {
+            "transaction_id": "TX-0401",
+            "reason_code": "goods_not_received",
+            "amount": 240.0,
+            "currency": "EUR"
+          },
+          "tool.result": {
+            "dispute_id": 1,
+            "status": "open"
+          }
+        },
+        "children": []
+      },
+      {
+        "name": "llm.call",
+        "span_id": "727f706c63f64a4f",
+        "started_at": 1792772105.38327,
+        "ended_at": 1792772106.7365632,
+        "duration_ms": 1353.3,
+        "attributes": {
+          "agent.loop_step": 1,
+          "gen_ai.request.model": "claude-haiku-5-5",
+          "gen_ai.usage.input_tokens": 3972,
+          "gen_ai.usage.output_tokens": 116
+        },
+        "children": []
+      }
+    ]
+  }
+}
