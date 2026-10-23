@@ -27,8 +27,10 @@ Copy `l05_dialogs.jsonl` into the L05 kit (`~/PayPilot-Kristina/l05/sets/`) and 
 ## Runs
 | Run | Profile | Result | Report |
 | --- | --- | --- | --- |
-| Baseline | `clean` | <N/M> | `reports/…` |
-| Lesson profile | `lesson-05` | <N/M> | `reports/…` |
+| v1 baseline | `clean` | 2/5 (false fails, see "Set versions") | `reports/v1/l05_dialogs-clean-20261023T142707.json` |
+| v1 lesson profile | `lesson-05` | 2/5 | `reports/v1/l05_dialogs-lesson-05-20261023T145309.json` |
+| **v2 baseline** | `clean` | **5/5** (25/25 runs) | `reports/l05_dialogs-clean-20261023T151519.json` |
+| **v2 lesson profile** | `lesson-05` | **1/5** | `reports/l05_dialogs-lesson-05-20261023T152706.json` |
 
 Prediction before the `lesson-05` run:
 - CONV-H01 (main): fails at step 5 — the summary at step 3 drops or substitutes the case facts (2.3: loss at 3 in 5/5 runs, visible at 5 in 4/5).
@@ -37,4 +39,9 @@ Prediction before the `lesson-05` run:
 - CONV-H04 (no detour): fails at step 5 — the summary still runs at step 3; step 5 is the first check.
 - CONV-H05 (one fact): passes in most runs; may fail at step 5 in 1–2 of 5 runs (240 → 180 substitution seen in the lab).
 Commit with the prediction: `566d94e`
-What failed: <id>. Difference from the prediction: <explanation or "none">
+What failed (v2, `lesson-05`): CONV-H01 (0/5 runs passed, first fail at step 5 in 5/5), CONV-H03 (0/5, step 5 in 4 runs, step 8 in 1), CONV-H04 (0/5, step 5 in 4 runs, step 7 in 1), CONV-H05 (3/5 runs failed, steps 5–7: "total EUR 480.00"). CONV-H02 (control) passed 5/5.
+Difference from the prediction:
+- H01, H03: as predicted (fail at step 5). In v1 H01 failed only at step 7, because "240" also matched the listed TX-0402 — fixed in v2 with "no TX-0402".
+- H04: predicted fail at step 5 — v1 showed 1/5 failing and looked like a surprise, but v2 shows 5/5 failing: without a detour the agent loses TX-0401 the same way (offers TX-0402 as an equal option); v1 simply did not check for it.
+- H05: predicted "mostly passes, may fail at 5 in 1–2 runs" — failed in 3/5 runs. The single amount survives the summary (240 holds in 5/5), but the agent merges the two 240 € charges into "EUR 480.00", which the prediction did not foresee.
+- H02: as predicted (passes).

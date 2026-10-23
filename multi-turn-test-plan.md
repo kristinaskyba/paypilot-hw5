@@ -43,8 +43,8 @@ system              PayPilot
 profiles            clean · lesson-05 (D06, D07)
 model and provider  claude-haiku-5-5, anthropic
 main scenario       C-07, 7 steps, customer CUS-0004 (TX-0401, 240.00 EUR)
-set                 l05_dialogs.jsonl, ... cases · set_hash ...
-run date            ...
+set                 l05_dialogs.jsonl, 5 cases · set_hash 802309a7ef39 (v2)
+run date            2026-10-23 (L05 lab runs: 2026-10-19), run clock 2026-09-15T10:00:00Z
 ```
 
 **Prediction before the lab:** the dispute amount disappears at step 4.
