@@ -311,20 +311,28 @@ Each row changes one axis compared with the main case, or is the extreme or the 
 At least three. At least one "accept". Same line format as in L03.
 
 ```
-1. what is not covered              ...
-   what happens if it breaks        ...
-   why we live with it now          ...
-   defer / accept                   ...
+1. what is not covered              10 steps · 3 entities · 2 switches (and the other long combinations with fewer than 5 entities)
+   what happens if it breaks        the agent loses TX or reason code in a long dialogue with fewer facts
+   why we live with it now          CONV-H03 (10 · 5 · 2) is the harder version and already fails 5/5;
+                                    fewer facts do not make the summary keep more (CONV-H05, 1 fact, still fails 4/5)
+   defer / accept                   accept
 
-2. what is not covered              ...
-   what happens if it breaks        ...
-   why we live with it now          ...
-   defer / accept                   ...
+2. what is not covered              5 steps · 5 entities · 0 switches (short dialogue right after the summary point)
+   what happens if it breaks        the case is lost right after the summary and shown at once
+   why we live with it now          2.5: the loss step does not depend on length (always step 3);
+                                    the lab length run CONV-SHORT showed it (1 run)
+   defer / accept                   accept
 
-3. what is not covered              ...
-   what happens if it breaks        ...
-   why we live with it now          ...
-   defer / accept                   ...
+3. what is not covered              action layer: an ambiguous reply after "reply yes" (CONV-A01) is not in the release gate
+   what happens if it breaks        an irreversible dispute is opened without consent — critical (5/5 runs on clean, see 3.4)
+   why we live with it now          it is not a memory defect and needs a fix in the confirmation rule first;
+                                    a gate that is red on every run would block every release
+   defer / accept                   defer — add CONV-A01 to the release gate as soon as the confirmation fix lands
+
+4. what is not covered              two open cases in one conversation (e.g. TX-0401 goods_not_received + TX-0402 duplicate_charge)
+   what happens if it breaks        facts of one case leak into the other (already seen: TX-0402 offered as an equal option)
+   why we live with it now          needs a new axis "cases per conversation", which doubles the plan cost
+   defer / accept                   defer — next plan revision
 ```
 
 *If everything is "defer", no decision was made: it is a wish list.*
@@ -333,28 +341,35 @@ At least three. At least one "accept". Same line format as in L03.
 
 | Blind spot | How we close it or why we accept it |
 | --- | --- |
-| The profile does not explain why the entity disappeared at exactly this step |  |
-| Consistent error: the invariant is green on a wrong value |  |
-| Axes not in the plan (language switch, returning a day later, two cases in one conversation) |  |
+| The profile does not explain why the entity disappeared at exactly this step | Closed by step inputs: the summary text in the traces (3.1, 3.4) shows what was dropped or substituted. Limitation: traces exist for one evidence run per case, not for all five → accept |
+| Consistent error: the invariant is green on a wrong value | Closed: every invariant pattern holds the oracle's value, and set v3 has oracle checks at the first-stated step (4.2). Not closed: a value the oracle does not know — in CONV-H05 the summary invented service_not_rendered, which the customer never stated → accept for now |
+| Axes not in the plan (language switch, returning a day later, two cases in one conversation) | Not covered → defer (two cases: 6.1 item 4). "A day later" needs a clock change between steps, which the runner does not support |
+| False positives: a correct answer that does not repeat a value nobody asked for | Found by the `clean` baseline (v1: reason code at the last step; v3: CONV-H02 amount, 1 of 25 runs). Closed by `probe_any` and, for H02, by asking for the amount in the step-2 question in the next version. The `clean` run stays mandatory before any `lesson-05` result is trusted |
+| A value check can be satisfied by an unrelated line ("240" of TX-0402 in a list of charges) | Closed in v2 by the "no TX-0402" check |
+| Checks are regex only (levels 3–4), no judge | Accept: cheap and deterministic. Meaning-level errors (e.g. "the two together come to EUR 480.00") are caught only when we foresee the pattern |
+| Length runs (2.5) are one run each | Accept: the loss step matched the five-run result of 2.3 (step 3); the plan cases repeat it with five runs |
 
 ### 6.3. Recommended fix for D06
 
 | Option | Choose? | Cost | What breaks instead |
 | --- | --- | --- | --- |
-| Move the case entities into a structured field | yes / no |  |  |
-| Raise `SUMMARIZE_AFTER` | yes / no |  |  |
-| Add "keep the numbers" to the summarizer prompt | yes / no |  |  |
+| Move the case entities into a structured field | **yes** | the most work: a field for the dispute case (TX, amount, reason code, deadline) kept outside the summary and added to every prompt; schema + agent code; small token cost | the field can go stale if the customer changes the case; every new case type needs its own fields |
+| Raise `SUMMARIZE_AFTER` | no | one config value; more tokens per step as the window grows (~7k tokens per step today; Haiku 5.5 input price ×5 above 100k tokens) | the loss does not disappear, it moves later: 2.5 shows the loss step is always the summary step |
+| Add "keep the numbers" to the summarizer prompt | no | a prompt change | probabilistic: CONV-H05 shows the summary invents facts (service_not_rendered), which an instruction cannot reliably stop |
 
-**Why this option under the Ship it mandate:** ...
+**Why this option under the Ship it mandate:** it is the only option our data shows would remove the failure instead of moving it (raising the threshold) or making it less likely (prompt). The case facts are exactly what the customer loses money on, so they should not depend on a summary at all. The cost is one bounded change for the dispute flow; the release gate (`l05_dialogs`, 5 cases) tells us when it works: `lesson-05` must turn green for CONV-H01, H03–H05.
 
 ---
 
 ## Final line
 
 ```
-what we traded                         ...
-what we are not doing                  ...
-under which conditions it changes      ...
+what we traded                         5 scenarios × 5 runs before each release (165 calls) instead of 36 combinations or a daily run
+what we are not doing                  the full combinatorics; two cases per conversation; language and "next day" axes;
+                                       the action layer (CONV-A01) in the gate — until the confirmation fix lands
+under which conditions it changes      the summarizer or prompt changes → run the dialogue set on every such change, not only before release;
+                                       the D06 fix (structured case field) lands → lesson-05 must be green for CONV-H01, H03–H05;
+                                       the confirmation fix lands → CONV-A01 joins the release gate
 ```
 
 ---
@@ -363,21 +378,21 @@ under which conditions it changes      ...
 
 **After the lab**
 
-- [ ] Section 1 has the prediction
-- [ ] Record sheets 2.1 and 2.2 are filled in for all seven steps, with history and retrieval context
-- [ ] 2.3 has five runs, the range and the median
-- [ ] In 2.4 the moment of loss and the moment of manifestation are in different rows
-- [ ] 3.1 names the loss step and proves that the retrieval context at the manifestation step is complete
-- [ ] 3.2 classifies the self-contradiction with evidence
-- [ ] 4.1 has two checks with results on `clean` and `lesson-05`
+- [x] Section 1 has the prediction
+- [x] Record sheets 2.1 and 2.2 are filled in for all seven steps, with history and retrieval context
+- [x] 2.3 has five runs, the range and the median
+- [x] In 2.4 the moment of loss and the moment of manifestation are in different rows
+- [x] 3.1 names the loss step and proves that the retrieval context at the manifestation step is complete
+- [x] 3.2 classifies the self-contradiction with evidence
+- [x] 4.1 has two checks with results on `clean` and `lesson-05`
 
 **Before submitting HW_4**
 
-- [ ] Section 1 has every line filled in, including the number of cases and `set_hash`
-- [ ] 2.3 names the dialogue length limit
-- [ ] 3.3 has the conclusion of the control run, 3.4 — failures of the other scenarios or "none"
-- [ ] In 4.2 every case has an invariant with a ladder level and an oracle
-- [ ] Section 5 has three axes, at least five scenarios with roles including a control, the cost of the full combinatorics and of the plan, and the schedule
-- [ ] 6.1 has at least three uncovered combinations, at least one "accept"
-- [ ] 6.3 chooses a fix for D06 and names its cost
-- [ ] The final line has all three items filled in
+- [x] Section 1 has every line filled in, including the number of cases and `set_hash`
+- [x] 2.3 names the dialogue length limit
+- [x] 3.3 has the conclusion of the control run, 3.4 — failures of the other scenarios or "none"
+- [x] In 4.2 every case has an invariant with a ladder level and an oracle
+- [x] Section 5 has three axes, at least five scenarios with roles including a control, the cost of the full combinatorics and of the plan, and the schedule
+- [x] 6.1 has at least three uncovered combinations, at least one "accept"
+- [x] 6.3 chooses a fix for D06 and names its cost
+- [x] The final line has all three items filled in
