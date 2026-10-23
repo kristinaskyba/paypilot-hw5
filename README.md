@@ -24,6 +24,11 @@ Copy `l05_dialogs.jsonl` into the L05 kit (`~/PayPilot-Kristina/l05/sets/`) and 
 | Baseline | `clean` | <N/M> | `reports/…` |
 | Lesson profile | `lesson-05` | <N/M> | `reports/…` |
 
-Prediction before the `lesson-05` run: pending
+Prediction before the `lesson-05` run:
+- CONV-H01 (main): fails at step 5 — the summary at step 3 drops or substitutes the case facts (2.3: loss at 3 in 5/5 runs, visible at 5 in 4/5).
+- CONV-H02 (control): passes — 2 steps, the summary never runs.
+- CONV-H03 (worst case): fails at step 5 — the first return to the case comes right after the summary.
+- CONV-H04 (no detour): fails at step 5 — the summary still runs at step 3; step 5 is the first check.
+- CONV-H05 (one fact): passes in most runs; may fail at step 5 in 1–2 of 5 runs (240 → 180 substitution seen in the lab).
 Commit with the prediction: `<hash>`
 What failed: <id>. Difference from the prediction: <explanation or "none">
