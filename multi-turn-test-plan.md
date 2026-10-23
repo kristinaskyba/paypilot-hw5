@@ -43,7 +43,7 @@ system              PayPilot
 profiles            clean · lesson-05 (D06, D07)
 model and provider  claude-haiku-5-5, anthropic
 main scenario       C-07, 7 steps, customer CUS-0004 (TX-0401, 240.00 EUR)
-set                 l05_dialogs.jsonl, 5 cases · set_hash 802309a7ef39 (v2)
+set                 l05_dialogs.jsonl, 5 cases · set_hash bb2256591f1d (v3, final)
 run date            2026-10-23 (L05 lab runs: 2026-10-19), run clock 2026-09-15T10:00:00Z
 ```
 
@@ -250,13 +250,16 @@ Rules. Check 1: every amount the agent attributes to TX-0401 in steps 2–7 equa
 
 | Case | Invariant: entity · from step · level | Oracle: step · who checks correctness | Share of runs where the invariant failed |
 | --- | --- | --- | --- |
-| CONV-… |  |  |  of 5 |
-| CONV-… |  |  |  of 5 |
-| CONV-… |  |  |  of 5 |
-| CONV-… |  |  |  of 5 |
-| CONV-… |  |  |  of 5 |
+| CONV-H01 | TX-0401 · 1 · 3 (regex, "no TX-0402") · amount 240 · 1 · 3 ("no 180") · reason code · 1 · 3 ("no service_not_rendered / duplicate_charge") · deadline 2026-10-18 · 2 · 3 | step 1: reason code (engine:disputes); steps 1–2: amount (customer, confirmed by `get_transactions` / `check_dispute_eligibility`); step 2: deadline from `check_dispute_eligibility` (engine:disputes) | TX 3 of 5 · amount 2 of 5 · code 2 of 5 · deadline 0 of 5 |
+| CONV-H02 | TX-0401, amount 240, reason code · 1 · 3, checked at step 2 | step 1: reason code; step 2: deadline (engine:disputes) | 0 of 5 (control) — on `clean`: amount 1 of 5 (false positive, see below) |
+| CONV-H03 | same 4 invariants as H01, probes at steps 5, 8, 10 | same as H01 | TX 5 of 5 · code 3 of 5 · amount 0 of 5 · deadline 0 of 5 |
+| CONV-H04 | same 4 invariants as H01, probes at steps 5, 7 | same as H01 | TX 5 of 5 · code 2 of 5 · amount 1 of 5 · deadline 0 of 5 |
+| CONV-H05 | amount 240 · 1 · 3 ("no 180, no 480"), at steps 5 and 7 | step 1: amount (engine:transactions, `get_transactions` → 240.0) | amount 4 of 5 |
 
-**Consistent error.** The agent consistently repeats a wrong value and the invariant is green. Which oracle in your set catches it: ...
+Set v3 (`bb2256591f1d`), report `reports/l05_dialogs-lesson-05-20261023T163832.json`. Oracle checks passed in every run on both profiles (the agent is right at the step where each value is first stated). On `clean` every invariant held in 24 of 25 runs; the exception is CONV-H02 run 1, where the answer was correct but did not repeat "240" because the step-2 question does not ask for the amount (a false positive, see 6.2).
+A green amount invariant does not prove the memory held: at step 6 the customer repeats "240 euro" and at step 5 "240" also appears in the list of both charges — the "no TX-0402" check is what shows the case was lost.
+
+**Consistent error.** The agent consistently repeats a wrong value and the invariant is green. Which oracle in your set catches it: the invariants do not compare the agent with itself — every pattern is the oracle's value (240 from the transaction data, goods_not_received and 2026-10-18 from the disputes engine at step 2), so a wrong value repeated from step 1 still fails. In addition, v3 has explicit oracle checks at the first-stated step (step 1 code, steps 1–2 amount, step 2 deadline) in every case; they catch an agent that is wrong from the start. Not caught: a value the oracle itself does not know — e.g. in CONV-H05 the reason code was never stated by the customer, so service_not_rendered invented by the summary is not checked (6.2).
 
 ---
 
