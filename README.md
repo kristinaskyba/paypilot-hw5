@@ -7,7 +7,7 @@ Copy `l05_dialogs.jsonl` into the L05 kit (`~/PayPilot-Kristina/l05/sets/`) and 
     docker compose run --rm eval --set l05_dialogs --profile clean
     docker compose run --rm eval --set l05_dialogs --profile lesson-05
 
-`set_hash`: 802309a7ef39 (v2; v1 was e705b4c94e56)
+`set_hash`: bb2256591f1d (v3; v2 was 802309a7ef39, v1 was e705b4c94e56)
 
 ## Dialogue cases
 | id | Role in the plan | Length · entities · switches | Invariants |
@@ -23,6 +23,7 @@ Copy `l05_dialogs.jsonl` into the L05 kit (`~/PayPilot-Kristina/l05/sets/`) and 
 ## Set versions
 - **v1** (`e705b4c94e56`, commits `00ff4a9`, prediction `566d94e`): first runs, reports in `reports/v1/`. The `clean` baseline was 2/5: the reason-code invariant required the code at the last step even when the question did not ask for it, and the deadline pattern missed "18 Oct 2026". On `lesson-05`, "240" passed even when the agent listed both 240 € charges (TX-0401 and TX-0402).
 - **v2** (`802309a7ef39`): reason code on any of the probe steps, wider date patterns, new invariant TX-0401 with "no TX-0402", "no 480" in CONV-H05. Replaying the v2 checks on the v1 answers: `clean` 5/5 cases in every run.
+- **v3** (`bb2256591f1d`): explicit oracle checks at the step where each value is first stated — step 1 reason code goods_not_received, steps 1–2 amount 240, step 2 deadline 2026-10-18 (H05: amount at step 1). Before v3 `oracle_turn`/`oracle_by` were only metadata. Replaying v3 on the v2 answers: oracle checks correct in all runs on both profiles.
 
 ## Runs
 | Run | Profile | Result | Report |
